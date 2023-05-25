@@ -3,8 +3,6 @@ from io import BytesIO
 from typing import Tuple
 import string
 import random
-
-import geopandas as gpd
 from owslib.wms import WebMapService
 from pyproj import Transformer, CRS
 import rasterio
