@@ -9,39 +9,30 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from dash import html, dcc, dash_table
 import dash_bootstrap_components as dbc
-import plotly.express as px
 import dash_leaflet as dl
 import pandas as pd
 import geopandas as gpd
 import shapely
-from dash_extensions.javascript import assign
 from sam_utils import generate_automatic_mask, sam_prompt_bbox
 from utils import (
+    bounds_to_table_row,
     shape_to_table_row,
     download_from_wms,
 )
 from config import WMS_URL, LAYER, IMAGE_FORMAT, WORK_DIR, RESOLUTION
 
-point_to_layer = assign(
-    """function(feature, latlng, context){
-    const p = feature.properties;
-    if(p.type === 'circlemarker'){return L.circleMarker(latlng, radius=p._radius)}
-    if(p.type === 'circle'){return L.circle(latlng, radius=p._mRadius)}
-    return L.marker(latlng);
-}"""
-)
 
 DEBUG = True
 
 annotation_types = ["ROI BBox", "Object BBox", "Foreground Point", "Background Point"]
 
-columns = ["type", "x_min", "y_min", "x_max", "y_max"]
+columns = ["id", "type", "x_min", "y_min", "x_max", "y_max"]
 models = ["sam_vit_b_01ec64.pth", "sam_vit_h_4b8939.pth", "sam_vit_l_0b3195.pth"]
 
 
 external_stylesheets = [dbc.themes.BOOTSTRAP, "src/assets/image_annotation_style.css"]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-
+app.title = "Satellite SAM"
 
 server = app.server
 
@@ -210,7 +201,9 @@ model_card = dbc.Card(
                                         value=models[0],
                                         clearable=False,
                                     ),
-                                    html.H4("Predicition IoU Threshold"),
+                                    html.Hr(),
+                                    html.H4("Automatic Mask Configuration"),
+                                    html.H5("Predicition IoU Threshold"),
                                     dcc.Input(
                                         id="pred-iou-thresh",
                                         type="number",
@@ -220,7 +213,7 @@ model_card = dbc.Card(
                                         step=0.01,
                                         value=0.88,
                                     ),
-                                    html.H4("Stability Score Threshold"),
+                                    html.H5("Stability Score Threshold"),
                                     dcc.Input(
                                         id="stability-score-thresh",
                                         type="number",
@@ -302,9 +295,7 @@ navbar = dbc.Navbar(
         [
             dbc.Row(
                 [
-                    dbc.Col(
-                        dbc.NavbarBrand("Grounding DINO and SAM for Satellite Images")
-                    ),
+                    dbc.Col(dbc.NavbarBrand("Satellite Segment Anything")),
                 ],
                 align="center",
             ),
@@ -374,26 +365,31 @@ def get_polygons(geojson_data, prev_data):
         raise PreventUpdate
     gdf = gpd.GeoDataFrame.from_features(geojson_data["features"])
     gdf.set_geometry = gdf["geometry"]
-    annotations_table_data = [shape_to_table_row(geom.bounds) for geom in gdf.geometry]
+    annotations_table_data = [shape_to_table_row(gdf.loc[[i]]) for i in range(len(gdf))]
     annotations_table_data = [
         {**annotations_table_data[i], "type": "Object BBox"}
+        if len(annotations_table_data[i].keys()) == 4
+        else {**annotations_table_data[i], "type": "Foreground Point"}
         for i in range(len(annotations_table_data))
     ]
+    if list(set(gdf["type"])) == ["marker"]:
+        gdf["geometry"] = gdf.geometry.buffer(0.05, cap_style=3)
+        # gdf.set_geometry = gdf["geometry"]
     gdf_bounds = gdf.total_bounds
     gdf_bounds = shapely.geometry.box(*gdf_bounds).buffer(0.005).bounds
-
-    bounds_row = shape_to_table_row(gdf_bounds)
+    gdf_bounds_geom = shapely.box(*gdf_bounds)
+    bounds_row = bounds_to_table_row(gdf_bounds_geom)
     bounds_row["type"] = "ROI BBox"
     annotations_table_data.append(bounds_row)
     if prev_data is not None:
         prev_data = [d for d in prev_data if d["type"] != "ROI BBox"]
+
         intersection = [
             d1
             for d1 in prev_data
             for d2 in annotations_table_data
-            if all(d1[key] == d2[key] for key in columns[1:])
+            if d1["id"] == d2["id"]
         ]
-
         annotations_table_data = [
             d2 for d2 in annotations_table_data if d2 not in intersection
         ]

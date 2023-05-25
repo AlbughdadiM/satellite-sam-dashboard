@@ -4,7 +4,7 @@ from typing import Tuple
 import string
 import random
 
-# from osgeo import gdal, osr
+import geopandas as gpd
 from owslib.wms import WebMapService
 from pyproj import Transformer, CRS
 import rasterio
@@ -27,65 +27,35 @@ def save_numpy_as_geotiff(array, template_file, output_file, count=1):
         dst.write(array, 1)
 
 
-# def array2raster(newRasterfn: str, dataset: str, array: np.array, dtype: str):
-#     """
-#     save GTiff file from numpy.array
-#     input:
-#         newRasterfn: save file name
-#         dataset : original tif file
-#         array : numpy.array
-#         dtype: Byte or Float32.
-#     """
-#     dataset = gdal.Open(dataset)
-#     cols = array.shape[1]
-#     rows = array.shape[0]
-#     originX, pixelWidth, b, originY, _, pixelHeight = dataset.GetGeoTransform()
-
-#     driver = gdal.GetDriverByName("GTiff")
-
-#     # set data type to save.
-#     GDT_dtype = gdal.GDT_Unknown
-#     if dtype == "Byte":
-#         GDT_dtype = gdal.GDT_Byte
-#     elif dtype == "Float32":
-#         GDT_dtype = gdal.GDT_Float32
-#     else:
-#         print("Not supported data type.")
-
-#     # set number of band.
-#     if array.ndim == 2:
-#         band_num = 1
-#     else:
-#         band_num = array.shape[2]
-
-#     outRaster = driver.Create(newRasterfn, cols, rows, band_num, GDT_dtype)
-#     outRaster.SetGeoTransform((originX, pixelWidth, 0, originY, 0, pixelHeight))
-
-#     # Loop over all bands.
-#     for b in range(band_num):
-#         outband = outRaster.GetRasterBand(b + 1)
-#         # Read in the band's data into the third dimension of our array
-#         if band_num == 1:
-#             outband.WriteArray(array)
-#         else:
-#             outband.WriteArray(array[:, :, b])
-#     # setteing srs from input tif file.
-#     prj = dataset.GetProjection()
-#     outRasterSRS = osr.SpatialReference(wkt=prj)
-#     outRaster.SetProjection(outRasterSRS.ExportToWkt())
-#     outband.FlushCache()
-
-
 def format_float(f):
     return "%.6f" % (float(f),)
 
 
-def shape_to_table_row(sh):
+def shape_to_table_row(row):
+    bounds = row.bounds.values[0]
+    if row.geom_type.values[0] == "Point":
+        return {
+            "x_min": format_float(bounds[0]),
+            "y_min": format_float(bounds[1]),
+            "id": str(row["_leaflet_id"].values[0]),
+        }
     return {
-        "x_min": format_float(sh[0]),
-        "y_min": format_float(sh[1]),
-        "x_max": format_float(sh[2]),
-        "y_max": format_float(sh[3]),
+        "x_min": format_float(bounds[0]),
+        "y_min": format_float(bounds[1]),
+        "x_max": format_float(bounds[2]),
+        "y_max": format_float(bounds[3]),
+        "id": str(row["_leaflet_id"].values[0]),
+    }
+
+
+def bounds_to_table_row(polygon):
+    bounds = polygon.bounds
+    return {
+        "x_min": format_float(bounds[0]),
+        "y_min": format_float(bounds[1]),
+        "x_max": format_float(bounds[2]),
+        "y_max": format_float(bounds[3]),
+        "id": "bbox",
     }
 
 
@@ -153,8 +123,8 @@ def geographic_to_pixel(
     # Calculate the conversion factors
     lat_range = max_latitude - min_latitude
     lon_range = max_longitude - min_longitude
-    lat_factor = image_height / lat_range
-    lon_factor = image_width / lon_range
+    # lat_factor = image_height / lat_range
+    # lon_factor = image_width / lon_range
 
     # Convert the bounding box coordinates to pixel coordinates
     x_min = ((bbox_geo[:, 0] - min_longitude) / lon_range * image_width).astype(int)
@@ -168,14 +138,14 @@ def geographic_to_pixel(
     return pixel_bbox
 
 
-if __name__ == "__main__":
-    from config import *
+# if __name__ == "__main__":
+#     from config import *
 
-    download_from_wms(
-        WMS_URL,
-        (1.25, 43.5, 1.5, 43.75),
-        "s2cloudless-2020",
-        "image/jpeg",
-        "/Users/syam/Documents/code/dino-sam/src/",
-        10,
-    )
+#     download_from_wms(
+#         WMS_URL,
+#         (1.25, 43.5, 1.5, 43.75),
+#         "s2cloudless-2020",
+#         "image/jpeg",
+#         "/Users/syam/Documents/code/dino-sam/src/",
+#         10,
+#     )
