@@ -10,6 +10,7 @@ from dash.exceptions import PreventUpdate
 from dash import html, dcc, dash_table
 import dash_bootstrap_components as dbc
 import dash_leaflet as dl
+import numpy as np
 import pandas as pd
 import geopandas as gpd
 import shapely
@@ -90,11 +91,11 @@ image_annotation_card = dbc.Card(
                     id="map",
                     style={
                         "width": "100%",
-                        "height": "80vh",
+                        "height": "66vh",
                         "margin": "auto",
                         "display": "block",
                     },
-                    center=[43.6045, 1.4442],
+                    center=[25.1190, 55.1318],
                     zoom=12,
                 )
             ],
@@ -102,19 +103,11 @@ image_annotation_card = dbc.Card(
         ),
         dbc.CardFooter(
             [
-                dcc.Markdown(
-                    "To annotate the above image, select an appropriate label on the right and then draw a "
-                    "rectangle with your cursor around the area of the image you wish to annotate.\n\n"
-                    "**Choose a different image to annotate**:"
-                ),
-                dbc.ButtonGroup(
-                    [
-                        dbc.Button("Previous image", id="previous", outline=True),
-                        dbc.Button("Next image", id="next", outline=True),
-                    ],
-                    size="lg",
-                    style={"width": "100%"},
-                ),
+                # dcc.Markdown(
+                #     "To annotate the above image, select an appropriate label on the right and then draw a "
+                #     "rectangle with your cursor around the area of the image you wish to annotate.\n\n"
+                #     "**Choose a different image to annotate**:"
+                # ),
             ]
         ),
     ],
@@ -368,7 +361,7 @@ def get_polygons(geojson_data, prev_data):
     annotations_table_data = [shape_to_table_row(gdf.loc[[i]]) for i in range(len(gdf))]
     annotations_table_data = [
         {**annotations_table_data[i], "type": "Object BBox"}
-        if len(annotations_table_data[i].keys()) == 4
+        if len(annotations_table_data[i].keys()) == 5
         else {**annotations_table_data[i], "type": "Foreground Point"}
         for i in range(len(annotations_table_data))
     ]
@@ -385,13 +378,13 @@ def get_polygons(geojson_data, prev_data):
         prev_data = [d for d in prev_data if d["type"] != "ROI BBox"]
 
         intersection = [
-            d1
+            d1["id"]
             for d1 in prev_data
             for d2 in annotations_table_data
             if d1["id"] == d2["id"]
         ]
         annotations_table_data = [
-            d2 for d2 in annotations_table_data if d2 not in intersection
+            d2 for d2 in annotations_table_data if d2["id"] not in intersection
         ]
 
         annotations_table_data = annotations_table_data + prev_data
@@ -448,12 +441,43 @@ def run_segmentation(
             segmetnation_path, png_path = generate_automatic_mask(
                 tmp_img_path, sam_model, pred_iou_thresh, stability_score_thresh
             )
+        # elif set(unique_types) == set(["Foreground Point","ROI BBox"]):
+
+        # elif set(unique_types) == set(["Foreground Point","Object BBox"]):
+
+        # elif set(unique_types) == set([["Foreground Point","Background Point","Object BBox"]]):
+
         else:  # len(table_data)>=2 and unique_types!=["bounding box"]:
+            bboxes_geo, foreground_points, background_points, stacked_points, labels = (
+                None,
+                None,
+                None,
+                None,
+                None,
+            )
             geom_df = pd.DataFrame(table_data)
-            bboxes_df = geom_df.loc[geom_df["type"] != "ROI BBox"]
-            bboxes_geo = bboxes_df.iloc[:, :4].astype(float).values
+            unique_types = list(set(unique_types) - set("ROI BBox"))
+            for u_t in unique_types:
+                tmp_df = geom_df.loc[geom_df["type"] == u_t]
+                if u_t == "Object BBox":
+                    bboxes_geo = tmp_df[columns[2:]].astype(float).values
+                if u_t == "Foreground Point":
+                    foreground_points = tmp_df[columns[2:4]].astype(float).values
+                if u_t == "Background Point":
+                    background_points = tmp_df[columns[2:4]].astype(float).values
+            if foreground_points is None and background_points is not None:
+                stacked_points = np.copy(background_points)
+                labels = np.zeros((stacked_points.shape[0]), dtype=np.uint8)
+            elif background_points is None and foreground_points is not None:
+                stacked_points = np.copy(foreground_points)
+                labels = np.ones((stacked_points.shape[0]), dtype=np.uint8)
+            elif background_points is not None and foreground_points is not None:
+                stacked_points = np.vstack((background_points, foreground_points))
+                labels = np.zeros((stacked_points.shape[0]), dtype=np.uint8)
+                labels[background_points.shape[0] :] = 1
+
             segmetnation_path, png_path = sam_prompt_bbox(
-                tmp_img_path, bboxes_geo, sam_model, roi_bbox
+                tmp_img_path, bboxes_geo, stacked_points, labels, sam_model, roi_bbox
             )
 
         image_bounds = [[roi_bbox[1], roi_bbox[0]], [roi_bbox[3], roi_bbox[2]]]

@@ -4,4 +4,4 @@ IMAGE_FORMAT = "image/jpeg"
 WORK_DIR = "/Users/syam/Desktop/test"
 RESOLUTION = 10
 TORCH_DEVICE = "cpu"
-WEIGHTS_PATH = "/Users/syam/Documents/code/dino-sam/src/weights"
+WEIGHTS_PATH = "/Users/syam/Documents/code/satellite-sam-dashboard/src/weights"

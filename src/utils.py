@@ -109,7 +109,7 @@ def download_from_wms(
     return output_filepath
 
 
-def geographic_to_pixel(
+def geographic_to_pixel_bbox(
     bbox_geo: np.array,
     image_width: int,
     image_height: int,
@@ -134,6 +134,31 @@ def geographic_to_pixel(
     pixel_bbox = np.column_stack((x_min, y_min, x_max, y_max))
 
     return pixel_bbox
+
+
+def geographic_to_pixel_point(
+    point_geo: np.array,
+    image_width: int,
+    image_height: int,
+    min_latitude: float,
+    max_latitude: float,
+    min_longitude: float,
+    max_longitude: float,
+) -> np.array:
+    # Calculate the conversion factors
+    lat_range = max_latitude - min_latitude
+    lon_range = max_longitude - min_longitude
+    # lat_factor = image_height / lat_range
+    # lon_factor = image_width / lon_range
+
+    # Convert the bounding box coordinates to pixel coordinates
+    x_pixel = ((point_geo[:, 0] - min_longitude) / lon_range * image_width).astype(int)
+    y_pixel = ((max_latitude - point_geo[:, 1]) / lat_range * image_height).astype(int)
+
+    # Create the pixel bounding box array
+    pixel_coord = np.column_stack((x_pixel, y_pixel))
+
+    return pixel_coord
 
 
 # if __name__ == "__main__":
