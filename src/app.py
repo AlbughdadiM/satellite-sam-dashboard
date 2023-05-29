@@ -550,4 +550,4 @@ def prepare_downloadble(n_clicks, download_data):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=DEBUG)
+    app.run_server(debug=DEBUG, host="0.0.0.0", port=8080)
