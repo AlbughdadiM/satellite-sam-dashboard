@@ -20,10 +20,8 @@ from utils import (
     shape_to_table_row,
     download_from_wms,
 )
-from config import WMS_URL, LAYER, IMAGE_FORMAT, WORK_DIR, RESOLUTION
+from config import WMS_URL, LAYER, IMAGE_FORMAT, WORK_DIR, RESOLUTION, DEBUG
 
-
-DEBUG = True
 
 annotation_types = ["ROI BBox", "Object BBox", "Foreground Point", "Background Point"]
 
@@ -441,13 +439,8 @@ def run_segmentation(
             segmetnation_path, png_path = generate_automatic_mask(
                 tmp_img_path, sam_model, pred_iou_thresh, stability_score_thresh
             )
-        # elif set(unique_types) == set(["Foreground Point","ROI BBox"]):
 
-        # elif set(unique_types) == set(["Foreground Point","Object BBox"]):
-
-        # elif set(unique_types) == set([["Foreground Point","Background Point","Object BBox"]]):
-
-        else:  # len(table_data)>=2 and unique_types!=["bounding box"]:
+        else:
             bboxes_geo, foreground_points, background_points, stacked_points, labels = (
                 None,
                 None,
@@ -550,4 +543,5 @@ def prepare_downloadble(n_clicks, download_data):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=DEBUG, host="0.0.0.0", port=8080)
+    app.run_server(debug=DEBUG, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+    # app.run_server(debug=DEBUG)

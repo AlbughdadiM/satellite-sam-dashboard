@@ -1,7 +1,8 @@
 WMS_URL = "https://tiles.maps.eox.at/wms"
 LAYER = "s2cloudless-2020"
 IMAGE_FORMAT = "image/jpeg"
-WORK_DIR = "/Users/syam/Desktop/test"
+WORK_DIR = "/tmp"
 RESOLUTION = 10
 TORCH_DEVICE = "cpu"
-WEIGHTS_PATH = "/Users/syam/Documents/code/satellite-sam-dashboard/src/weights"
+WEIGHTS_PATH = "weights"
+DEBUG = False

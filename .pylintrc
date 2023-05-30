@@ -1,5 +1,5 @@
 [MASTER]
-init-hook='import sys; sys.path.append("./src"); sys.path.append("./src/assets"); sys.path.append("/src/sam")'
+init-hook='import sys; sys.path.append("./src"); sys.path.append("./src/assets"); sys.path.append("./src/sam")'
 ignored-modules=
     torch,
     torchvision,
@@ -7,3 +7,4 @@ disable=
     C0114, # missing-module-docstring
     C0115, # missing-class-docstring
     C0116, # missing-function-docstring
+    C0301, # line-too-long
