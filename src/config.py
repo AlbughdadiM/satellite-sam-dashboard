@@ -5,4 +5,4 @@ WORK_DIR = "/tmp"
 RESOLUTION = 10
 TORCH_DEVICE = "cpu"
 WEIGHTS_PATH = "weights"
-DEBUG = False
+DEBUG = True
