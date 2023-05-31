@@ -2,7 +2,7 @@
 
 ## About this app
 
-This dash app integrates the Segment Anything Model <sup>[1](#sam)</sup> (SAM) with Sentinel-2 data. The app is built using Dash Plotly <sup>[2](#dash)</sup>. It allows segmenting satellite images using the two ways provided by SAM: automatic mask generator and prompt segmentation (using points and bounding boxes).
+This app integrates the Segment Anything Model <sup>[1](#sam)</sup> (SAM) with Sentinel-2 data. The app is built using Dash Plotly and dash leaflet <sup>[2](#dash)</sup>. It allows segmenting satellite images using the two ways provided by SAM: automatic mask generator and prompt segmentation (using points and bounding boxes).
 
 ## Features
 
@@ -17,6 +17,7 @@ This dash app integrates the Segment Anything Model <sup>[1](#sam)</sup> (SAM) w
 - Different support of points:
   - Foreground points
   - Background points
+- Modify location of bounding boxes and points.
 - Provide prompts for more than one object at a time.
 - Refine segmentation inside a bounding box of an object by adding foreground and background points.
 - Visualize the obtained results directly on the map.
@@ -70,12 +71,29 @@ The app provides two options to use SAM with Sentinel-2 images:
 
 <ol type="a">
   <li>The user draws a bounding box on the ROI to generate a segmentation mask for.</li>
+
+  <img src="images/auto-1.png" alt="Tool to draw boundg box">
+
+  <img src="images/auto-2.png" alt="Draw boundg box around your ROI">
+
   <li>The bounding box annotation will be added to the table "annotated data" marking xmin, ymin, xmax, ymax, id and the type of the geometry.</li>
+
+  <img src="images/auto-3.png" alt="Generated coordinates of the bounding box">
+
   <li>To generate an automatic mask for the whole region covered by the bounding box, the user must select type as <b><i>"ROI BBox"</i></b>.</li>
+
+  <img src="images/auto-4.png" alt="Set type of bounding box to ROI BBox">
+
   <li>In the Automatic Mask Configuration part of the dashboard, the two parameters <b> <i> prediction IoU threshold and stability score threshold </b></i> contol the results of the generated mask.</li>
   <li>Once the ROI is selected and the parameters are adjusted, click on <b><i>Segment ROI</b></i>. </li>
   <li>The user can visualize the obtained results on the map. </li>
+
+  <img src="images/auto-5.png" alt="Obtained automatic mask">
+
   <li>The user can download the results as a zip file by clicking on <b><i>Download Results</b></i></li>
+
+  <img src="images/auto-6.png" alt="QGIS visualization">
+
   <li>To start a new segmentation task, click on <b><i>Refresh</i></b>. </li>
 </ol>
 
