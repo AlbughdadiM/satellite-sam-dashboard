@@ -4,6 +4,11 @@
 
 This app integrates the Segment Anything Model <sup>[1](#sam)</sup> (SAM) with Sentinel-2 data. The app is built using Dash Plotly and dash leaflet <sup>[2](#dash)</sup>. It allows segmenting satellite images using the two ways provided by SAM: automatic mask generator and prompt segmentation (using points and bounding boxes).
 
+## Environment
+
+[![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-310/)
+
+
 ## Features
 
 - Integration of Sentinel-2 using WMS protocol.
@@ -101,17 +106,28 @@ The app provides two options to use SAM with Sentinel-2 images:
     <ol type="a">
     <li>The user draws a bounding box around the object to be segmented using the bounding box drawing tool.</li>
 
+    <img src="images/bbox-1.png" alt="QGIS visualization">
+
     <li>The user can obtain a binary mask showing the object inside this bounding box.</li>
 
+    <img src="images/bbox-2.png" alt="QGIS visualization">
+
     <li>The user can refine the segmentation results by using foreground and background points.</li>
+
+    <img src="images/bbox-points-1.png" alt="QGIS visualization">
+
+    <img src="images/bbox-points-2.png" alt="QGIS visualization">
 
     <li>The user can draw multiple bounding boxes associated with multiple objects in the satellite image. Additionally, each bounding box can be associated with multiple foreground and background points.</li>
 
     <li>Once the object is selected and the supporting points, click on <b><i>Segment ROI</b></i>. </li>
+
     <li>The user can visualize the obtained results on the map. </li>
 
 
     <li>The user can download the results as a zip file by clicking on <b><i>Download Results</b></i></li>
+
+    <img src="images/bbox-points-3.png" alt="QGIS visualization">
 
     <li>To start a new segmentation task, click on <b><i>Refresh</i></b>. </li>
   </ol>
