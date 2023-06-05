@@ -8,7 +8,6 @@ This app integrates the Segment Anything Model <sup>[1](#sam)</sup> (SAM) with S
 
 [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-310/)
 
-
 ## Features
 
 - Integration of Sentinel-2 using WMS protocol.
@@ -102,7 +101,7 @@ The app provides two options to use SAM with Sentinel-2 images:
     <li>To start a new segmentation task, click on <b><i>Refresh</i></b>. </li>
     </ol>
 
-2. **SAM Prompts** 
+2. **SAM Prompts**
     <ol type="a">
     <li>The user draws a bounding box around the object to be segmented using the bounding box drawing tool.</li>
 
@@ -124,14 +123,12 @@ The app provides two options to use SAM with Sentinel-2 images:
 
     <li>The user can visualize the obtained results on the map. </li>
 
-
     <li>The user can download the results as a zip file by clicking on <b><i>Download Results</b></i></li>
 
     <img src="images/bbox-points-3.png" alt="QGIS visualization">
 
     <li>To start a new segmentation task, click on <b><i>Refresh</i></b>. </li>
   </ol>
-      
 
 ## References
 
