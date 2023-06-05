@@ -69,35 +69,53 @@ The app provides two options to use SAM with Sentinel-2 images:
 
 1. **Automatic Mask Generation**
 
-<ol type="a">
-  <li>The user draws a bounding box on the ROI to generate a segmentation mask for.</li>
+    <ol type="a">
+    <li>The user draws a bounding box on the ROI to generate a segmentation mask for.</li>
 
-  <img src="images/auto-1.png" alt="Tool to draw boundg box">
+    <img src="images/auto-1.png" alt="Tool to draw boundg box">
 
-  <img src="images/auto-2.png" alt="Draw boundg box around your ROI">
+    <img src="images/auto-2.png" alt="Draw boundg box around your ROI">
 
-  <li>The bounding box annotation will be added to the table "annotated data" marking xmin, ymin, xmax, ymax, id and the type of the geometry.</li>
+    <li>The bounding box annotation will be added to the table "annotated data" marking xmin, ymin, xmax, ymax, id and the type of the geometry.</li>
 
-  <img src="images/auto-3.png" alt="Generated coordinates of the bounding box">
+    <img src="images/auto-3.png" alt="Generated coordinates of the bounding box">
 
-  <li>To generate an automatic mask for the whole region covered by the bounding box, the user must select type as <b><i>"ROI BBox"</i></b>.</li>
+    <li>To generate an automatic mask for the whole region covered by the bounding box, the user must select type as <b><i>"ROI BBox"</i></b>.</li>
 
-  <img src="images/auto-4.png" alt="Set type of bounding box to ROI BBox">
+    <img src="images/auto-4.png" alt="Set type of bounding box to ROI BBox">
 
-  <li>In the Automatic Mask Configuration part of the dashboard, the two parameters <b> <i> prediction IoU threshold and stability score threshold </b></i> contol the results of the generated mask.</li>
-  <li>Once the ROI is selected and the parameters are adjusted, click on <b><i>Segment ROI</b></i>. </li>
-  <li>The user can visualize the obtained results on the map. </li>
+    <li>In the Automatic Mask Configuration part of the dashboard, the two parameters <b> <i> prediction IoU threshold and stability score threshold </b></i> contol the results of the generated mask.</li>
+    <li>Once the ROI is selected and the parameters are adjusted, click on <b><i>Segment ROI</b></i>. </li>
+    <li>The user can visualize the obtained results on the map. </li>
 
-  <img src="images/auto-5.png" alt="Obtained automatic mask">
+    <img src="images/auto-5.png" alt="Obtained automatic mask">
 
-  <li>The user can download the results as a zip file by clicking on <b><i>Download Results</b></i></li>
+    <li>The user can download the results as a zip file by clicking on <b><i>Download Results</b></i></li>
 
-  <img src="images/auto-6.png" alt="QGIS visualization">
+    <img src="images/auto-6.png" alt="QGIS visualization">
 
-  <li>To start a new segmentation task, click on <b><i>Refresh</i></b>. </li>
-</ol>
+    <li>To start a new segmentation task, click on <b><i>Refresh</i></b>. </li>
+    </ol>
 
-b.  
+2. **SAM Prompts** 
+    <ol type="a">
+    <li>The user draws a bounding box around the object to be segmented using the bounding box drawing tool.</li>
+
+    <li>The user can obtain a binary mask showing the object inside this bounding box.</li>
+
+    <li>The user can refine the segmentation results by using foreground and background points.</li>
+
+    <li>The user can draw multiple bounding boxes associated with multiple objects in the satellite image. Additionally, each bounding box can be associated with multiple foreground and background points.</li>
+
+    <li>Once the object is selected and the supporting points, click on <b><i>Segment ROI</b></i>. </li>
+    <li>The user can visualize the obtained results on the map. </li>
+
+
+    <li>The user can download the results as a zip file by clicking on <b><i>Download Results</b></i></li>
+
+    <li>To start a new segmentation task, click on <b><i>Refresh</i></b>. </li>
+  </ol>
+      
 
 ## References
 
