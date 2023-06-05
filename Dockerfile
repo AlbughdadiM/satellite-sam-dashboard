@@ -13,6 +13,8 @@ WORKDIR  /satellite-sam-dashboard/
 RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt --ignore-installed --timeout=1000
 WORKDIR  /satellite-sam-dashboard/src
+RUN mkdir weights
+RUN wget -P weights/ https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth
 CMD exec gunicorn --bind :8080 --log-level info --workers 1 --threads 8 --timeout 0 app:server
 
 
