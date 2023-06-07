@@ -64,7 +64,12 @@ cd satellite-sam-dashboard
 docker build . -t satellite-sam-dashboard:v0.1
 docker run --name=dashboard -p 8080:8080 satellite-sam-dashboard:v0.1
 ```
-Note that in the prod branch, sam_vit_b is the only model that is downloaded to the docker image to keep it lighter. However, feel free to add the others model weights as needed.
+Alternatively, you can pull the already-built docker image 
+
+```bash
+docker pull ghcr.io/albughdadim/satellite-sam-dashboard:latest
+docker run --name=dashboard -p 8080:8080 satellite-sam-dashboard:latest
+```
 
 ## Screenshot of the app
 
@@ -133,6 +138,11 @@ The app provides two options to use SAM with Sentinel-2 images:
     <li>To start a new segmentation task, click on <b><i>Refresh</i></b>. </li>
   </ol>
 
+## Notes
+
+- On the prod branch, sam_vit_b is the only model that is downloaded to the docker image to keep it lighter. However, feel free to add the other model weights as needed.
+- For prompt segmentation, the current code supports two cases: only bounding boxes, and bounding boxes with supporting points. The only points case is not covered as the results were not always satisfactory with Sentinel-2. Note that in the case of bounding boxes and points, if the points are outside the bounding boxes, they will be ignored.
+  
 ## References
 
 <a name="sam">1</a> <https://github.com/facebookresearch/segment-anything/tree/main>
