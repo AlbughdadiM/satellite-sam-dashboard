@@ -40,6 +40,8 @@ git checkout dev
 python3.10 -m venv myven
 source myvenv/bin/activate
 python3.10 -m pip install -r requirements.txt
+mkdir src/weights
+wget -P src/weights/ https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth https://dl.fbaipublicfiles.com/segment_anything/sam_vit_l_0b3195.pth https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
 ```
 
 Note that the installation of rasterio requires GDAL to be installed <sup>[3](#gdal)</sup>.
@@ -62,6 +64,7 @@ cd satellite-sam-dashboard
 docker build . -t satellite-sam-dashboard:v0.1
 docker run --name=dashboard -p 8080:8080 satellite-sam-dashboard:v0.1
 ```
+Note that in the prod branch, sam_vit_b is the only model that is downloaded to the docker image to keep it lighter. However, feel free to add the others model weights as needed.
 
 ## Screenshot of the app
 
