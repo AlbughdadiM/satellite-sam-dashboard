@@ -1,5 +1,8 @@
 # Satellite SAM Dashboard
 
+[![DOI](https://sandbox.zenodo.org/badge/645259891.svg)](https://sandbox.zenodo.org/badge/latestdoi/645259891)
+
+
 ## About this app
 
 This app integrates the Segment Anything Model <sup>[1](#sam)</sup> (SAM) with Sentinel-2 data. The app is built using Dash Plotly and dash leaflet <sup>[2](#dash)</sup>. It allows segmenting satellite images using the two ways provided by SAM: automatic mask generator and prompt segmentation (using points and bounding boxes).
