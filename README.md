@@ -1,5 +1,7 @@
 # Satellite SAM Dashboard
 
+Mohanad Albughdadi. (2023). AlbughdadiM/satellite-sam-dashboard: zenodo release (v0.1.0). https://doi.org/10.5072/zenodo.1220770
+
 [![DOI](https://sandbox.zenodo.org/badge/645259891.svg)](https://sandbox.zenodo.org/badge/latestdoi/645259891)
 
 
